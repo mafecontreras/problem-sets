@@ -31,10 +31,10 @@ for (nombre_archivo in nombres_archivos) {
   if (grepl("No ocupados", nombre_archivo)) {
     No_ocupados <- data.frame(readRDS(nombre_archivo))
   }
-  if (grepl("No ocupados", nombre_archivo)) {
+  if (grepl("Ocupados", nombre_archivo)) {
     Ocupados <- data.frame(readRDS(nombre_archivo))
   }
-  if (grepl("No ocupados", nombre_archivo)) {
+  if (grepl("Fuerza de trabajo", nombre_archivo)) {
     Fuerza_trabajo <- data.frame(readRDS(nombre_archivo))
   }
 }
@@ -46,7 +46,7 @@ print(lista_dataframes)
 
 #1.3
 
-data_frame_combinado <- rbindlist(lista_dataframes)
+data_frame_combinado <- rbindlist(lista_dataframes, fill = TRUE)
 data_frame_combinado <- as.data.frame(data_frame_combinado)
 
 
