@@ -28,26 +28,107 @@ print(nombres_archivos)
 #1.2 Importar archivos
 lista_dataframes <- list() 
 for (nombre_archivo in nombres_archivos) {
-  if (grepl("No ocupados", nombre_archivo)) {
-    No_ocupados <- data.frame(readRDS(nombre_archivo))
-  }
-  if (grepl("Ocupados", nombre_archivo)) {
-    Ocupados <- data.frame(readRDS(nombre_archivo))
-  }
-  if (grepl("Fuerza de trabajo", nombre_archivo)) {
-    Fuerza_trabajo <- data.frame(readRDS(nombre_archivo))
+  if (grepl("No ocupados|Ocupados|Fuerza de trabajo", nombre_archivo)) {
+    lista_dataframes[[nombre_archivo]] <- readRDS(nombre_archivo)
   }
 }
 
+print(lista_dataframes)
+
+#1.3
+
+nombres_df <- names(lista_dataframes)
+
+lista_no_ocupados <- list()
+lista_ocupados <- list()
+lista_fuerza_trabajo <- list()
+
+for (nombre in nombres_df) {
+  contenido_dataframe <- lista_dataframes[[nombre]]
+  
+  if (grepl("No ocupados", nombre)) {
+    lista_no_ocupados[[nombre]] <- contenido_dataframe
+  } 
+  if (grepl("Ocupados", nombre)) {
+    lista_ocupados[[nombre]] <- contenido_dataframe
+  }
+  if (grepl("Fuerza de trabajo", nombre)) {
+    lista_fuerza_trabajo[[nombre]] <- contenido_dataframe
+  }
+}
+
+# Finalmente, combinamos los data frames de cada categoría en un solo data frame
+df_no_ocupados <- rbindlist(lista_no_ocupados, fill = TRUE)
+df_ocupados <- rbindlist(lista_ocupados, fill = TRUE)
+df_fuerza_trabajo <- rbindlist(lista_fuerza_trabajo, fill = TRUE)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+for (dataframe in lista_dataframes) {
+  if (grepl("No ocupados", dataframe)) {
+    lista_no_ocupados[[dataframe]] <- lista_dataframes[[dataframe]] 
+    }
+  if (grepl("Ocupados", dataframe)) {
+    lista_ocupados[[dataframe]] <- lista_dataframes[[dataframe]] 
+  }
+  if (grepl("Fuerza de trabajo", nombre_archivo)) {
+    lista_fuerza_trabajo[[dataframe]] <- lista_dataframes[[dataframe]]  
+  }
+}
+ 
+
+
+lista_dataframes <- list() 
 lista_dataframes <- list(No_ocupados=No_ocupados,
                          Ocupados = Ocupados, 
                          Fuerza_trabajo = Fuerza_trabajo)
 print(lista_dataframes)
 
-#1.3
 
-data_frame_combinado <- rbindlist(lista_dataframes, fill = TRUE)
+
+
+
+
+
+
+
+for(dataframes in lista_dataframes){
+  if (grepl("No ocupados", dataframes)) {
+    df_no_ocupados <- rbindlist(dataframes, fill = TRUE)
+  } 
+}
+  <- 
+  
+  rbindlist(lista_dataframes, fill = TRUE)
 data_frame_combinado <- as.data.frame(data_frame_combinado)
+
+
 
 
 #############################################
