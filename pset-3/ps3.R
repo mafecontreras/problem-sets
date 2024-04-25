@@ -63,7 +63,8 @@ df_ocupados <- rbindlist(lista_ocupados, fill = TRUE)
 df_fuerza_trabajo <- rbindlist(lista_fuerza_trabajo, fill = TRUE)
 
 
-
+#############################################
+####2. 
 
 
 
