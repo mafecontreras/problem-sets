@@ -51,4 +51,6 @@ data_frame_combinado <- as.data.frame(data_frame_combinado)
 
 
 #############################################
-####2. PREPARACIÓN
+####2. PREPARACION
+
+
