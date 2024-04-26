@@ -1,3 +1,4 @@
+
 ########################################
 ##                                    ##
 ##  TALLER DE R. ECON-1302            ##
@@ -66,66 +67,62 @@ df_fuerza_trabajo <- rbindlist(lista_fuerza_trabajo, fill = TRUE)
 
 #############################################
 ###punto 2.1
-datos_fuerza <- subset(df_fuerza_trabajo, FT == 1 & PET == 1, select = c(FT, PET, FEX_C18))
-suma_variables <- colSums(datos_fuerza)
-print(suma_variables)
-datos_fuerza2 <- subset(df_fuerza_trabajo, FT == 1 & PET == 1, select = c(FT, PET, FEX_C18, MES))##cogemos este para hacer la tabla 2.2
-##
-datos_ocupados <- subset(df_ocupados, FT==1, select =c(FT, FEX_C18))
-suma_variables <- colSums(datos_ocupados)
-print (suma_variables)
-datos_ocupados2 <- subset(df_ocupados, FT==1, select =c(FT, FEX_C18, MES))
-##
-datos_no_ocupados <- subset(df_no_ocupados, DSI==1, select = c(DSI, FEX_C18))
-suma_variables <- colSums(datos_no_ocupados)
-print (suma_variables)
-datos_no_ocupados2 <- subset(df_ocupados, FT==1, select =c(FT, FEX_C18, MES))
 
-##punto 2.2
-merged_data <- rbind(datos_no_ocupados2, datos_ocupados2, datos_fuerza2, fill=TRUE)
-print(merged_data)
+# Lista para almacenar los resultados de cada ciclo
+results <- list()
 
-##punto 2.3
-num_filas<-nrow(datos_no_ocupados)
-print(num_filas) 
-##
-num_filas2 <-nrow(df_fuerza_trabajo)
-print(num_filas2)
+ciclo_fuerza <- list()
+ciclo_ocupados <- list()
+ciclo_no_ocupados <- list()
 
-##
-division<-num_filas/num_filas2
-print(division)
-##para generar la tasa de desempelo utilizamos la variable DSI y la dividimos por
-##el numero de filas de dt_fuerza_laboral, lo que nos indica una tasa de 0.7 de desempleo
+# Ciclo para la base de fuerza de trabajo
+for (mes in unique(df_fuerza_trabajo$MES)){
+  datos_fuerza <- subset(df_fuerza_trabajo, FT == 1 & PET == 1 & MES == mes, select = c(FT, PET, FEX_C18))
+  suma_fuerza <- colSums(datos_fuerza)
+  ciclo_fuerza[[length(ciclo_fuerza) + 1]] <- data.frame(
+    Mes = mes,
+    Poblacion_en_edad_de_trabajar = suma_fuerza['PET'],
+    Fuerza_laboral = suma_fuerza['FT']
+  )
+}
 
+# Ciclo para la base de ocupados
+for (mes in unique(df_ocupados$MES)){
+  datos_ocupados <- subset(df_ocupados, FT==1 & MES == mes, select = c(FT, FEX_C18))
+  suma_ocupados <- colSums(datos_ocupados)
+  ciclo_ocupados[[length(ciclo_ocupados) + 1]] <- data.frame(
+    Mes = mes,
+    Ocupados = suma_ocupados['FT']
+  )
+}
 
-##
-tasadesempleo<-nrow(datos_ocupados)
-print(tasadesempleo) 
-##
-num_filas2 <-nrow(datos_fuerza)
-print(num_filas2)
+# Ciclo para la base de no ocupados (desempleados)
+for (mes in unique(df_ocupados$MES)){
+  datos_no_ocupados <- subset(df_no_ocupados, DSI==1 & MES == mes, select = c(DSI, FEX_C18))
+  suma_no_ocupados <- colSums(datos_no_ocupados)
+  ciclo_no_ocupados[[length(ciclo_no_ocupados) + 1]] <- data.frame(
+    Mes = mes,
+    Desempleados = suma_no_ocupados['DSI']
+  )
+}
 
-##
-tasaocupacion <-num_filas/num_filas2
-print(tasaocupacion)
-##para generar la tasa de ocupacion utilizamos los datos de ocupados y la dividimos por
-##el numero de filas de datos_fuerza, lo que nos indica una tasa de 0.88 de ocupacion
+f_no_ocupados <- rbindlist(ciclo_no_ocupados, fill = TRUE)
+f_ocupados <- rbindlist(ciclo_ocupados, fill = TRUE)
+f_fuerza_trabajo <- rbindlist(ciclo_fuerza, fill = TRUE)
 
-##punto 3
-library(tidyr)
+#2.2
+#Pongo todas en el mismo formato
+f_no_ocupados$Mes <- as.character(f_no_ocupados$Mes)
+f_ocupados$Mes <- as.character(f_ocupados$Mes)
+f_fuerza_trabajo$Mes <- as.character(f_fuerza_trabajo$Mes)
 
-# Supongamos que tus datos se llaman "datos_tasas"
-datos_tasas_wide <- pivot_wider( names_from = "Mes", values_from = c("tasadesempleo", "tasaocupacion"))
-library(ggplot2)
+# Combinar los data frames
+output <- f_fuerza_trabajo %>%
+  full_join(f_ocupados, by = "Mes") %>%
+  full_join(f_no_ocupados, by = "Mes")
 
-ggplot(datos_tasas_wide, aes(x = Mes)) +
-  geom_line(aes(y = Tasa_Desempleo, color = "Desempleo"), size = 1) +
-  geom_line(aes(y = Tasa_Ocupacion, color = "Ocupacion"), size = 1) +
-  labs(x = "Mes", y = "Tasa (%)", color = "Variable") +
-  scale_color_manual(values = c("Desempleo" = "red", "Ocupacion" = "blue")) +
-  theme_minimal()
-
+# Ver el resultado
+print(output)
 
 
 
