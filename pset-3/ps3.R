@@ -124,7 +124,24 @@ output <- f_fuerza_trabajo %>%
 # Ver el resultado
 print(output)
 
+# 2.3
+output$tasa_desempleo <- output$Desempleados / output$Fuerza_laboral
+output$tasa_ocupacion <- output$Ocupados / output$Poblacion_en_edad_de_trabajar
 
+
+##punto 3
+
+df_long <- output %>%
+  pivot_longer(cols = starts_with("tasa"),
+               names_to = "tasa_tipo",
+               values_to = "valor")
+ggplot(data = df_long, aes(x = Mes, y = valor, group = tasa_tipo, color = tasa_tipo)) +
+  geom_line() +
+  labs(title = "Tasas de Desempleo y Ocupación por Mes",
+       x = "Mes",
+       y = "Valor de la tasa",
+       color = "Tipo de Tasa") +
+  theme_minimal()
 
 
 
